@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+    <properties>
+        <property name="LOG_HOME">logs</property>
+        <property name="FILE_NAME">seres-module-service</property>
+    </properties>
+    <appenders>
+        <!--这个输出控制台的配置-->
+        <Console name="STDOUT" >
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+            <!-- 输出日志的格式-->
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}{GMT+8}^|%-5level^|[%logger{50}:%L]^|[%X{X-B3-TraceId},%X{X-B3-SpanId}]^|%msg%n" charset="UTF-8"/>
+        </Console>
+
+        <RollingRandomAccessFile name="FILE-ALL" fileName="${LOG_HOME}/${FILE_NAME}-info.log" filePattern="${LOG_HOME}/${FILE_NAME}.log.%d{yyyy-MM-dd-HH}">
+            <ThresholdFilter level="ALL" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS}{GMT+8}^|%-5level^|[%logger{50}:%L]^|[%X{X-B3-TraceId},%X{X-B3-SpanId}]^|%msg%n" charset="UTF-8" />
+            <Policies>
+                <TimeBasedTriggeringPolicy  interval="1" />
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="3"  >
+                <Delete basePath="logs" maxDepth="2">
+                    <IfFileName glob="*${FILE_NAME}.*.log" />
+                    <IfLastModified age="30d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+    </appenders>
+
+    <loggers>
+        <AsyncLogger name="springfox" level="OFF"></AsyncLogger>
+
+        <AsyncRoot level="INFO" includeLocation="true" >
+            <AppenderRef ref="FILE-ALL" />
+            <AppenderRef ref="STDOUT" />
+        </AsyncRoot>
+
+    </loggers>
+</configuration>

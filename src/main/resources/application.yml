@@ -1,0 +1,105 @@
+spring:
+  # 数据源配置
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ev_dev}?useUnicode=true&characterEncoding=utf-8&createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_UID:root}
+    password: ${DB_PWD:root123!@#}
+    connectionProperties: druid.stat.mergeSql=true;
+    filters: stat,wall,log4j
+    initialSize: 5
+    maxActive: 20
+    maxPoolPreparedStatementPerConnectionSize: 20
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    minIdle: 5
+    poolPreparedStatements: true
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+    validationQuery: SELECT 1 FROM DUAL
+  redis:
+    # 数据库索引
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    #连接超时时间
+    timeout: 10000
+    jedis:
+      pool:
+        #最大连接数
+        maxActive: 500
+        #最大阻塞等待时间(负数表示没限制)
+        maxWait: -1
+        #最大空闲
+        maxIdle: 200
+        #最小空闲
+        minIdle: 0
+druid:
+  stat:
+    slowSqlMillis: 3000
+
+#pagehelper配置
+pagehelper:
+  helperDialect: mysql
+  offsetAsPageNum: true
+  rowBoundsWithCount: true
+  reasonable: false
+
+#配置feign
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+#配置ribbon超时时间
+ribbon:
+  ReadTimeout: 30000
+  ConnectTimeout: 30000
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+  MaxAutoRetriesNextServer: 2 # 切换实例的重试次数
+  MaxAutoRetries: 1 # 对当前实例的重试次数
+#配置hystrix
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enable: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 240000
+  threadpool:
+    default:
+      coreSize: 500 #并发执行的最大线程数，默认10
+      maxQueueSize: 1000 #BlockingQueue的最大队列数，默认值-1
+      queueSizeRejectionThreshold: 800 #即使maxQueueSize没有达到，达到queueSizeRejectionThreshold该值后，请求也会被拒绝，默认值5
+
+## Mybatis 配置
+mybatis:
+  typeAliasesPackage: com.seres.module.entity #指向实体类包路径
+  mapperLocations: classpath:mapper/*.xml #classpath 路径下 mapper 包下，* 代表会扫描所有 xml 文件
+  configuration:
+    mapUnderscoreToCamelCase: true
+
+# tk配置
+mapper:
+  mappers:  tk.mybatis.mapper.common.Mapper
+  not-empty: false
+  before: true
+  identity: MYSQL
+
+#开启SpringBoot Admin的监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

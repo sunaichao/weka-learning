@@ -1,0 +1,26 @@
+server:
+  port: 12000
+spring:
+  application:
+    name: weka-learning
+  zipkin:
+    base-url: http://${ZIPKIN_HOST:106.15.79.193}:${ZIPKIN_PORT:9411}
+  sleuth:
+    sampler:
+      # 采样率值介于 0 到 1 之间，1 则表示全部采集
+      probability: 1
+  cloud:
+    nacos:
+      config:
+        enabled: false
+        server-addr: ${NACOS_HOST:106.15.79.193}:${NACOS_PORT:8848}
+        file-extension: properties
+        namespace: ${NACOS_NAMESPACE:}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+      discovery:
+        server-addr: ${NACOS_HOST:106.15.79.193}:${NACOS_PORT:8848}
+        namespace: ${NACOS_NAMESPACE:}
+logging:
+  config: classpath:sokon-log4j2.xml
+  level:
+    root: INFO
